@@ -1,0 +1,7 @@
+# PostgreSQL variables
+postgresql_version: 14
+postgres_password: "StrongRootP@ss123"
+
+db_user: "devuser"
+db_user_password: "DevUserP@ss321"
+db_name: "myappdb"

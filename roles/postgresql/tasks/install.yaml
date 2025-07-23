@@ -1,0 +1,15 @@
+- name: Install PostgreSQL and dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - postgresql
+    - postgresql-contrib
+    - python3-psycopg2
+
+- name: Ensure PostgreSQL is started and enabled
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: yes

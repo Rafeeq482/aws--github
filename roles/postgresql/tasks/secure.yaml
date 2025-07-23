@@ -1,0 +1,6 @@
+- name: Ensure postgres password is set
+  become_user: postgres
+  ansible.builtin.shell: psql -c "ALTER USER postgres WITH PASSWORD '{{ postgres_password }}';"
+  args:
+    executable: /bin/bash
+  changed_when: false

@@ -1,0 +1,6 @@
+# Galaxy roles requirements
+# Add any external roles here
+# requirements.yml
+collections:
+  - name: community.mysql
+  - name: community.postgresql

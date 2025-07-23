@@ -1,0 +1,24 @@
+ansible-server-management/
+|
+├── inventory.ini    
+├── playbooks/
+│   ├── site.yml
+│   ├── patching.yml
+│   ├── package_install.yml
+│   ├── webservers.yml
+│   ├── databases.yml
+│   ├── hardening.yml
+│   └── logrotate.yml
+├── roles/
+│   ├── patching/
+│   ├── package_installer/
+│   ├── nginx/
+│   ├── apache2/
+│   ├── mysql/
+│   ├── postgresql/
+│   ├── logrotate/
+│   └── hardening/
+├── templates/
+├── files/
+├── README.md
+└── requirements.yml   # if using Galaxy roles

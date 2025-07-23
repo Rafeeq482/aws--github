@@ -1,0 +1,6 @@
+# Log rotation playbook
+- name: Apply logrotate role
+  hosts: all
+  become: yes
+  roles:
+    - role: logrotate

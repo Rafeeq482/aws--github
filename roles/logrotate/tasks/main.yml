@@ -1,0 +1,14 @@
+# Logrotate tasks
+- name: Ensure logrotate is installed
+  ansible.builtin.apt:
+    name: logrotate
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Deploy custom logrotate config
+  ansible.builtin.template:
+    src: custom_logrotate.j2
+    dest: /etc/logrotate.d/custom-logs
+    owner: root
+    group: root
+    mode: '0644'

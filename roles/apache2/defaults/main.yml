@@ -1,0 +1,4 @@
+# Apache2 default variables
+apache_user: www-data
+web_root: /var/www/html
+apache_config_dir: /etc/apache2

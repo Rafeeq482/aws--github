@@ -1,0 +1,5 @@
+# roles/patching/vars/main.yml
+
+linux_family_package_manager:
+  RedHat: "yum"
+  Debian: "apt"

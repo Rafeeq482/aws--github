@@ -1,0 +1,8 @@
+# Logrotate default variables
+logrotate_retention: 7        # Keep 7 rotated logs
+logrotate_frequency: daily    # daily, weekly, monthly
+logrotate_compress: true      # Enable gzip compression
+logrotate_log_files:
+  - path: /var/log/nginx/*.log
+  - path: /var/log/apache2/*.log
+  - path: /var/log/syslog

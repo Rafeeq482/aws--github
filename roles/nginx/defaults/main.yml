@@ -1,0 +1,6 @@
+# Nginx default variables
+# roles/nginx/defaults/main.yml
+
+nginx_user: www-data
+web_root: /var/www/html
+server_name: localhost

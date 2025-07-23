@@ -1,0 +1,36 @@
+# Patching tasks
+# roles/patching/tasks/main.yml
+
+- name: Gather OS family
+  ansible.builtin.set_fact:
+    os_family: "{{ ansible_os_family }}"
+
+- name: Update apt cache (Debian)
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ patch_cache_valid_time }}"
+  when: os_family == "Debian"
+
+- name: Upgrade all packages (Debian)
+  ansible.builtin.apt:
+    upgrade: dist
+  when: os_family == "Debian"
+  notify: reboot system if needed
+
+- name: Update all packages (RedHat)
+  ansible.builtin.yum:
+    name: "*"
+    state: latest
+  when: os_family == "RedHat"
+  notify: reboot system if needed
+
+- name: Check if reboot is required (Debian/Ubuntu)
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+  when: os_family == "Debian"
+
+- name: Set reboot_required fact
+  ansible.builtin.set_fact:
+    reboot_required: "{{ reboot_required_file.stat.exists }}"
+  when: os_family == "Debian"

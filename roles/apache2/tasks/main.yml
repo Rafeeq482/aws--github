@@ -1,0 +1,46 @@
+# Apache2 tasks
+---
+
+- name: Ensure apache user exists
+  ansible.builtin.user:
+    name: "{{ apache_user }}"
+    system: yes
+    shell: /usr/sbin/nologin
+
+- name: Install Apache2
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Set ownership of the web root
+  ansible.builtin.file:
+    path: "{{ web_root }}"
+    owner: "{{ apache_user }}"
+    group: "{{ apache_user }}"
+    recurse: yes
+    state: directory
+    mode: '0750'
+
+- name: Secure Apache config directory
+  ansible.builtin.file:
+    path: "{{ apache_config_dir }}"
+    owner: root
+    group: root
+    recurse: yes
+    mode: '0640'
+
+- name: Ensure Apache service is enabled and running
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Check if Apache is serving the default page
+  ansible.builtin.uri:
+    url: http://localhost
+    status_code: 200
+  register: apache_health_check
+  retries: 5
+  delay: 3
+  until: apache_health_check.status == 200

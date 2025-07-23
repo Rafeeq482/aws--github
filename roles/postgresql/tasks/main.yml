@@ -1,0 +1,12 @@
+# PostgreSQL tasks
+- name: Include install tasks
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include config tasks
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Include security hardening
+  ansible.builtin.include_tasks: secure.yml
+
+- name: Include user creation
+  ansible.builtin.include_tasks: user.yml

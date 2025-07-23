@@ -1,0 +1,5 @@
+# Patching default variables
+# roles/patching/defaults/main.yml
+
+patch_reboot_if_required: true
+patch_cache_valid_time: 3600

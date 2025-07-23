@@ -1,0 +1,18 @@
+# Package installation playbook
+# playbooks/package_install.yml
+
+- name: Install Required Packages
+  hosts: all
+  become: true
+  vars:
+    install_pip: false
+    install_python3: false
+    install_boto3: false
+    install_nodejs: false
+    install_php: false
+    install_nginx: false
+    install_apache2: false
+    install_mysql: false
+    install_postgresql: false
+  roles:
+    - package_installer

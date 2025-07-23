@@ -1,0 +1,13 @@
+# Databases playbook
+---
+- name: Configure MySQL servers
+  hosts: mysql_servers
+  become: yes
+  roles:
+    - { role: mysql, tags: [mysql] }
+
+- name: Configure PostgreSQL servers
+  hosts: postgresql_servers
+  become: yes
+  roles:
+    - { role: postgresql, tags: [postgresql] }

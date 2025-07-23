@@ -1,0 +1,12 @@
+# MySQL tasks
+- name: Include MySQL installation tasks
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include MySQL configuration tasks
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Include MySQL security hardening
+  ansible.builtin.include_tasks: secure.yml
+
+- name: Include MySQL user creation
+  ansible.builtin.include_tasks: user.yml

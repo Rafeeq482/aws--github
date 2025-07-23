@@ -1,0 +1,8 @@
+# Patching handlers
+# roles/patching/handlers/main.yml
+
+- name: reboot system if needed
+  ansible.builtin.reboot:
+    msg: "Rebooting system due to patching"
+    reboot_timeout: 600
+  when: patch_reboot_if_required | bool and reboot_required | default(false)

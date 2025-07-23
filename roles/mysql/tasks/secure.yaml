@@ -1,0 +1,26 @@
+- name: Remove anonymous users
+  community.mysql.mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+
+- name: Disallow root login remotely
+  community.mysql.mysql_user:
+    name: root
+    host: "{{ item }}"
+    state: absent
+  loop:
+    - '%'
+    - '::1'
+
+- name: Remove test database
+  community.mysql.mysql_db:
+    name: test
+    state: absent
+
+- name: Reload privilege tables
+  community.mysql.mysql_privs:
+    privs: '*.*:USAGE'
+    user: root
+    host: localhost
+    state: present

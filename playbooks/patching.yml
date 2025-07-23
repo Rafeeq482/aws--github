@@ -1,0 +1,8 @@
+# Patching playbook
+# playbooks/patching.yml
+
+- name: Patch All Servers
+  hosts: all
+  become: yes
+  roles:
+    - patching

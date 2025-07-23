@@ -1,0 +1,10 @@
+# Package installer default variables
+install_pip: false
+install_python3: false
+install_boto3: false
+install_nodejs: false
+install_php: false
+install_nginx: false
+install_apache2: false
+install_mysql: false
+install_postgresql: false

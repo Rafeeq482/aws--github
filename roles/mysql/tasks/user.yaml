@@ -1,0 +1,7 @@
+- name: Create app user with full privileges
+  community.mysql.mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_user_password }}"
+    priv: "*.*:ALL"
+    host: "%"
+    state: present

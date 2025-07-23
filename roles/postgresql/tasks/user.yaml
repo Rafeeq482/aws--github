@@ -1,0 +1,13 @@
+- name: Create PostgreSQL user
+  community.postgresql.postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_user_password }}"
+    priv: "ALL"
+    db: "{{ db_name }}"
+    state: present
+
+- name: Create database
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+    state: present

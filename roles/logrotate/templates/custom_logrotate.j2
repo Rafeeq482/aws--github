@@ -1,0 +1,14 @@
+{% for item in logrotate_log_files %}
+{{ item.path }} {
+    rotate {{ logrotate_retention }}
+    {{ logrotate_frequency }}
+    {% if logrotate_compress %}compress{% endif %}
+    missingok
+    notifempty
+    create 0640 root adm
+    sharedscripts
+    postrotate
+        systemctl reload rsyslog > /dev/null 2>&1 || true
+    endscript
+}
+{% endfor %}
