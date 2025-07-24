@@ -1,0 +1,19 @@
+- name: Add Ondrej PHP PPA
+  ansible.builtin.apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
+  when: php_install
+
+- name: Install specified PHP version
+  ansible.builtin.apt:
+    name: "php{{ php_version }}"
+    state: present
+    update_cache: yes
+  when: php_install
+
+- name: Install PHP modules
+  ansible.builtin.apt:
+    name: "{{ php_modules | map('regex_replace', '^(.*)$', 'php' ~ php_version ~ '-\\1') | list }}"
+    state: present
+  when: php_install

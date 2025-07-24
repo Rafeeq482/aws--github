@@ -1,1 +1,8 @@
 # Main site playbook
+- import_playbook: php.yaml
+- import_playbook: databases.yml
+- import_playbook: hardening.yml
+- import_playbook: logrotate.yml
+- import_playbook: package_install.yml
+- import_playbook: patching.yml
+- import_playbook: webservers.yml

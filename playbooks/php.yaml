@@ -1,0 +1,7 @@
+---
+- name: PHP Installation Playbook
+  hosts: webservers
+  become: true
+
+  roles:
+    - role: php_installer

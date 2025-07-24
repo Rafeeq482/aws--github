@@ -1,0 +1,8 @@
+php_version: "7.4"
+php_install: true
+php_modules:
+  - cli
+  - common
+  - mbstring
+  - xml
+  - curl

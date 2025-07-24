@@ -1,0 +1,7 @@
+---
+# Default variables for Redis role
+redis_bind_address: "127.0.0.1"
+redis_port: 6379
+redis_protected_mode: "yes"
+redis_supervised: "systemd"
+redis_requirepass: ""        # Leave blank for no password
