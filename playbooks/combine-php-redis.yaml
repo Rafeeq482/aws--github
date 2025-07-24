@@ -27,7 +27,7 @@
   hosts: webservers
   become: true
   roles:
-    - php_installer
+    - php-installer
 
 # ==============================
 # Redis Role for Redis Servers
