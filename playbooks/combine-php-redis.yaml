@@ -1,45 +1,12 @@
 ---
-- name: Inject bastion key to /tmp
-  hosts: all
-  gather_facts: false
-  become: false
-  tasks:
-    - name: Copy bastion key to /tmp/bastion.pem
-      copy:
-        content: "{{ BASTION_KEY }}"
-        dest: /tmp/bastion.pem
-        mode: '0600'
-
-    - name: Ensure bastion key exists
-      stat:
-        path: /tmp/bastion.pem
-      register: bastion_key_check
-
-    - name: Fail if bastion key is missing
-      fail:
-        msg: "Bastion key is not injected properly!"
-      when: not bastion_key_check.stat.exists
-
-
 - name: Install PHP on Web Servers
-  hosts: webservers
+  hosts: web_servers
   become: true
   roles:
     - php-installer
-
 
 - name: Install Redis on Redis Servers
   hosts: redis_servers
   become: true
   roles:
     - redis
-
-
-- name: Cleanup bastion key
-  hosts: all
-  become: true
-  tasks:
-    - name: Delete temporary bastion key
-      file:
-        path: /tmp/bastion.pem
-        state: absent
