@@ -20,27 +20,21 @@
         msg: "Bastion key is not injected properly!"
       when: not bastion_key_check.stat.exists
 
-# ==============================
-# PHP Role for Web Servers
-# ==============================
+
 - name: Install PHP on Web Servers
   hosts: webservers
   become: true
   roles:
     - php-installer
 
-# ==============================
-# Redis Role for Redis Servers
-# ==============================
+
 - name: Install Redis on Redis Servers
   hosts: redis_servers
   become: true
   roles:
     - redis
 
-# ==============================
-# Optional Cleanup
-# ==============================
+
 - name: Cleanup bastion key
   hosts: all
   become: true

@@ -1,6 +1,4 @@
 ---
-# Main tasks for Redis role
----
 - name: Install Redis
   ansible.builtin.apt:
     name: redis-server

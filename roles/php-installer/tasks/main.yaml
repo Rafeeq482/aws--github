@@ -1,3 +1,4 @@
+---
 - name: Add Ondrej PHP PPA
   ansible.builtin.apt_repository:
     repo: ppa:ondrej/php
