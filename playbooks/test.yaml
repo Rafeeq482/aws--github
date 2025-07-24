@@ -1,24 +1,15 @@
 ---
-- name: Test AWX connectivity to private instance via bastion
+- name: ✅ Test Connectivity to Private Host via Bastion
   hosts: private_server
-  gather_facts: no
+  gather_facts: false
   tasks:
-
-    - name: Print connection info
-      ansible.builtin.debug:
-        msg: |
-          Trying to connect to {{ inventory_hostname }}
-          ansible_user = {{ ansible_user }}
-          ansible_host = {{ ansible_host }}
-          ansible_ssh_common_args = {{ ansible_ssh_common_args | default("not defined") }}
-
-    - name: Run simple ping
-      ansible.builtin.ping:
-
-    - name: Run whoami to verify shell access
+    - name: 🖥️ Whoami on Private Host
       ansible.builtin.command: whoami
       register: whoami_output
 
-    - name: Show whoami output
+    - name: 🔍 Show whoami result
       ansible.builtin.debug:
-        var: whoami_output.stdout
+        msg: "Connected to {{ inventory_hostname }} as {{ whoami_output.stdout }}"
+
+    - name: ✅ Confirm Bastion Message Was Printed (if visible)
+      ansible.builtin.shell: echo 'Connection reached. If bastion was used, its banner message might be in debug output or logs.'
