@@ -1,4 +1,5 @@
 ---
+- import_playbook: playbooks/bastion-setup.yaml
 - name: Install and configure Redis on EC2
   hosts: redis_servers
   become: true
