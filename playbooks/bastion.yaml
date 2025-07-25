@@ -1,0 +1,36 @@
+---
+- name: 🔐 Verify Bastion Key and Test SSH Access
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: 🔐 Show permissions on injected SSH keys
+      ansible.builtin.command: ls -l /runner/env/
+      register: key_perms
+
+    - name: 📋 Show PEM key permissions
+      ansible.builtin.debug:
+        var: key_perms.stdout_lines
+
+    - name: 🔧 Ensure bastion PEM key has correct permissions
+      ansible.builtin.file:
+        path: /runner/env/template.ssh_key_bastion
+        mode: '0600'
+
+    - name: 🔍 Check Bastion Reachability
+      ansible.builtin.command: >
+        ssh -i /runner/env/template.ssh_key_bastion
+        -o StrictHostKeyChecking=no
+        ubuntu@65.2.190.68 "echo '✅ Bastion OK'"
+      register: bastion_check
+      ignore_errors: true
+
+    - name: 💬 Show Bastion Response
+      ansible.builtin.debug:
+        msg: |
+          {% if bastion_check.rc == 0 %}
+          SUCCESS: {{ bastion_check.stdout }}
+          {% else %}
+          ❌ SSH to Bastion Failed:
+          {{ bastion_check.stderr }}
+          {% endif %}
