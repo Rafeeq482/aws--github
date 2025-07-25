@@ -1,7 +1,7 @@
 ---
 - import_playbook: bastion-setup.yaml
 - name: Install and configure Redis on EC2
-  hosts: redis_servers
+  hosts: all
   become: true
 
   roles:
