@@ -23,30 +23,30 @@
       ansible.builtin.debug:
         var: env_files.stdout_lines
 
-    - name: 🔧 Fix permission for bastion key (no sudo)
-      ansible.builtin.command: chmod 600 /runner/env/template.ssh_key_bastion
-      register: chmod_result
-      ignore_errors: true
+    - name: 📄 Write bastion PEM from env
+      copy:
+        content: "{{ lookup('env', 'BASTION_PEM_KEY') }}"
+        dest: /tmp/bastion.pem
+        mode: '0600'
 
-    - name: 🪵 Show chmod result
-      ansible.builtin.debug:
-        msg: |
-          {% if chmod_result.rc == 0 %}
-          ✅ chmod success
-          {% else %}
-          ❌ chmod failed: {{ chmod_result.stderr }}
-          {% endif %}
+    - name: 📁 List files in /tmp to confirm PEM creation
+      command: ls -l /tmp
+      register: tmp_files
+
+    - name: 🪵 Show /tmp PEM file listing
+      debug:
+        var: tmp_files.stdout_lines
 
     - name: 🧪 Test Bastion SSH
-      ansible.builtin.shell: >
-        ssh -i /runner/env/template.ssh_key_bastion
+      shell: >
+        ssh -i /tmp/bastion.pem
         -o StrictHostKeyChecking=no
         ubuntu@65.2.190.68 "echo '✅ Connected to Bastion'"
       register: ssh_result
       ignore_errors: true
 
     - name: 🪵 Show SSH test result
-      ansible.builtin.debug:
+      debug:
         msg: |
           {% if ssh_result.rc == 0 %}
           ✅ Success: {{ ssh_result.stdout }}
