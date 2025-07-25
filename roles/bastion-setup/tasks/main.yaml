@@ -1,24 +1,7 @@
----
-- name: ⛔ Skip if BASTION_PEM_KEY is not injected
-  debug:
-    msg: "🔁 Skipping bastion setup – no BASTION_PEM_KEY found."
-  when: lookup('env', 'BASTION_PEM_KEY') is not defined or lookup('env', 'BASTION_PEM_KEY') == ''
+- name: 🛡️ Ensure /tmp/bastion.pem has correct permissions if it exists
   become: false
-  tags: skip_check
-
-- name: 🧾 Write bastion PEM to /tmp/bastion.pem
   copy:
-    content: "{{ lookup('env', 'BASTION_PEM_KEY') | replace('\\n', '\n') }}"
     dest: /tmp/bastion.pem
+    content: "{{ lookup('env', 'BASTION_PEM_KEY') | b64decode }}"
     mode: '0600'
   when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
-  become: false
-  tags: write_pem
-
-- name: 🔐 Set 600 permissions explicitly (in case of fallback)
-  file:
-    path: /tmp/bastion.pem
-    mode: '0600'
-  when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
-  become: false
-  tags: chmod_pem

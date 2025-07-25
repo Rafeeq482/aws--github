@@ -1,8 +1,7 @@
 ---
-- name: 🧰 Bastion PEM Setup
+- name: 🔐 Prepare bastion access key
   hosts: localhost
   gather_facts: false
 
   roles:
     - role: bastion-setup
-      when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
