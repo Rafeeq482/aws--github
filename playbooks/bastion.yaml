@@ -25,7 +25,7 @@
 
     - name: 📄 Write bastion PEM from env
       copy:
-         content: "{{ lookup('env', 'BASTION_PEM_KEY') | replace('\\n', '\n') }}"
+        content: "{{ lookup('env', 'BASTION_PEM_KEY') | replace('\\n', '\n') }}"
         dest: /tmp/bastion.pem
         mode: '0600'
 
