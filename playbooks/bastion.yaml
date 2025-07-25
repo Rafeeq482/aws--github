@@ -27,7 +27,7 @@
       copy:
         content: "{{ lookup('env', 'BASTION_PEM_KEY') | replace('\\n', '\n') }}"
         dest: /tmp/bastion.pem
-        mode: '0600'
+        
 
     - name: 📁 List files in /tmp to confirm PEM creation
       command: ls -l /tmp
