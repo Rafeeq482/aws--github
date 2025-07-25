@@ -2,6 +2,7 @@
 - name: 🔐 Verify Bastion Key and Test SSH Access
   hosts: localhost
   gather_facts: false
+  connection: local
   tasks:
 
     - name: 🔐 Show permissions on injected SSH keys
