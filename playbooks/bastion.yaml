@@ -1,43 +1,35 @@
 ---
-- name: 🔐 Verify Bastion Key and Test SSH Access (No Sudo)
+- name: 🔐 Test Bastion SSH (No sudo)
   hosts: localhost
   gather_facts: false
   connection: local
+  become: false
   tasks:
 
     - name: 👤 Who am I running as?
-      ansible.builtin.command: whoami
+      command: whoami
       register: whoami_result
 
-    - name: 🧾 Current user
-      ansible.builtin.debug:
-        var: whoami_result.stdout
+    - name: 🧾 Show current user
+      debug:
+        msg: "{{ whoami_result.stdout }}"
 
-    - name: 📁 List injected SSH keys
-      ansible.builtin.command: ls -l /runner/env/
-      register: key_perms
+    - name: 🔧 Fix permission for bastion key (no sudo)
+      shell: chmod 600 /runner/env/template.ssh_key_bastion
 
-    - name: 📋 Show PEM key permissions
-      ansible.builtin.debug:
-        var: key_perms.stdout_lines
-
-    - name: 🔧 Fix PEM permissions without sudo
-      ansible.builtin.shell: chmod 600 /runner/env/template.ssh_key_bastion
-
-    - name: 🔍 Check Bastion Reachability
-      ansible.builtin.command: >
+    - name: 🧪 Test Bastion SSH
+      shell: >
         ssh -i /runner/env/template.ssh_key_bastion
         -o StrictHostKeyChecking=no
-        ubuntu@65.2.190.68 "echo '✅ Bastion OK'"
-      register: bastion_check
+        ubuntu@65.2.190.68 "echo '✅ Connected to Bastion'"
+      register: ssh_result
       ignore_errors: true
 
-    - name: 💬 Show Bastion Response
-      ansible.builtin.debug:
+    - name: 🪵 Show result
+      debug:
         msg: |
-          {% if bastion_check.rc == 0 %}
-          ✅ SUCCESS: {{ bastion_check.stdout }}
+          {% if ssh_result.rc == 0 %}
+          ✅ Success: {{ ssh_result.stdout }}
           {% else %}
-          ❌ SSH to Bastion Failed:
-          {{ bastion_check.stderr }}
+          ❌ Failed: {{ ssh_result.stderr }}
           {% endif %}
