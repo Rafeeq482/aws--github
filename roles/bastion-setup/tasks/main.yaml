@@ -3,6 +3,7 @@
   debug:
     msg: "🔁 Skipping bastion setup – no BASTION_PEM_KEY found."
   when: lookup('env', 'BASTION_PEM_KEY') is not defined or lookup('env', 'BASTION_PEM_KEY') == ''
+  become: false
   tags: skip_check
 
 - name: 🧾 Write bastion PEM to /tmp/bastion.pem
@@ -11,6 +12,7 @@
     dest: /tmp/bastion.pem
     mode: '0600'
   when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
+  become: false
   tags: write_pem
 
 - name: 🔐 Set 600 permissions explicitly (in case of fallback)
@@ -18,4 +20,5 @@
     path: /tmp/bastion.pem
     mode: '0600'
   when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
+  become: false
   tags: chmod_pem
