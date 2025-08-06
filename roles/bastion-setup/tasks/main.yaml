@@ -2,6 +2,6 @@
   become: false
   copy:
     dest: /tmp/bastion.pem
-    content: "{{ lookup('env', 'BASTION_PEM_KEY') | b64decode }}"
+    content: "{{ lookup('env', 'BASTION_PEM_KEY') }}"
     mode: '0600'
   when: lookup('env', 'BASTION_PEM_KEY') is defined and lookup('env', 'BASTION_PEM_KEY') != ''
