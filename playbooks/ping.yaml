@@ -1,0 +1,9 @@
+---
+- import_playbook: bastion-setup.yaml
+
+- name: Test connectivity with ping
+  hosts: all
+  gather_facts: false
+  
+  roles:
+    - role: ping
