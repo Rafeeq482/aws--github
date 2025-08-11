@@ -1,6 +1,7 @@
 ---
 - name: 🔐 Prepare bastion access key
   hosts: localhost
+  connection: local
   gather_facts: false
 
   roles:
