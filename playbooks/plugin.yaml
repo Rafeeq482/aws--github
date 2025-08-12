@@ -1,10 +1,37 @@
 ---
-- name: Check if amazon.aws.aws_ec2 plugin exists
+- name: Debug AWS EC2 inventory connectivity and config
   hosts: localhost
   gather_facts: no
   connection: local
   become: false
+
   tasks:
-    - name: Run ansible-doc for aws_ec2 plugin
-      ansible.builtin.command:
-        cmd: ansible-doc -t inventory amazon.aws.aws_ec2
+    - name: Show Ansible inventory plugin debug output
+      ansible.builtin.shell: |
+        ansible-inventory -i inventory/aws-multi-account.aws_ec2.yml --list -vvv
+      register: inventory_debug
+      ignore_errors: yes
+
+    - name: Print inventory debug output
+      ansible.builtin.debug:
+        var: inventory_debug.stdout_lines
+
+    - name: Check boto3 and botocore versions
+      ansible.builtin.shell: |
+        python3 -c "import boto3, botocore; print('boto3', boto3.__version__, 'botocore', botocore.__version__)"
+      register: boto_versions
+      ignore_errors: yes
+
+    - name: Print boto3/botocore versions
+      ansible.builtin.debug:
+        var: boto_versions.stdout_lines
+
+    - name: Check environment variables for AWS and proxy
+      ansible.builtin.shell: |
+        env | egrep -i 'http_proxy|https_proxy|no_proxy|AWS_'
+      register: env_vars
+      ignore_errors: yes
+
+    - name: Print AWS/proxy environment variables
+      ansible.builtin.debug:
+        var: env_vars.stdout_lines
