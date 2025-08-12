@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: no
   connection: local
+  become: false
   tasks:
     - name: Run ansible-doc for aws_ec2 plugin
       ansible.builtin.command:
