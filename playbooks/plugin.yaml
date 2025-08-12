@@ -2,6 +2,7 @@
 - name: Check if amazon.aws.aws_ec2 plugin exists
   hosts: localhost
   gather_facts: no
+  connection: local
   tasks:
     - name: Run ansible-doc for aws_ec2 plugin
       ansible.builtin.command:
