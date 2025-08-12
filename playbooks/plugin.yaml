@@ -1,20 +1,43 @@
 ---
-- name: Debug AWS EC2 inventory connectivity and config
+- name: Full AWS dynamic inventory debug
   hosts: localhost
   gather_facts: no
   connection: local
   become: false
 
+  vars:
+    inventory_file_path: "inventory/aws-multi-account.aws_ec2.yml"
+
   tasks:
-    - name: Show Ansible inventory plugin debug output
-      ansible.builtin.shell: |
-        ansible-inventory -i inventory/aws-multi-account.aws_ec2.yml --list -vvv
-      register: inventory_debug
+
+    - name: Check if inventory file exists inside container
+      ansible.builtin.stat:
+        path: "{{ inventory_file_path }}"
+      register: inv_file
+
+    - name: Show inventory file status
+      ansible.builtin.debug:
+        var: inv_file
+
+    - name: Show first 20 lines of the inventory file
+      ansible.builtin.shell: head -n 20 "{{ inventory_file_path }}"
+      register: inv_preview
+      when: inv_file.stat.exists
       ignore_errors: yes
 
-    - name: Print inventory debug output
+    - name: Display inventory file preview
       ansible.builtin.debug:
-        var: inventory_debug.stdout_lines
+        var: inv_preview.stdout_lines
+      when: inv_file.stat.exists
+
+    - name: Check if amazon.aws.aws_ec2 plugin is available
+      ansible.builtin.shell: ansible-doc -t inventory amazon.aws.aws_ec2
+      register: plugin_doc
+      ignore_errors: yes
+
+    - name: Display plugin documentation snippet (first 20 lines)
+      ansible.builtin.debug:
+        var: plugin_doc.stdout_lines
 
     - name: Check boto3 and botocore versions
       ansible.builtin.shell: |
@@ -22,16 +45,32 @@
       register: boto_versions
       ignore_errors: yes
 
-    - name: Print boto3/botocore versions
+    - name: Display boto3/botocore versions
       ansible.builtin.debug:
         var: boto_versions.stdout_lines
 
-    - name: Check environment variables for AWS and proxy
-      ansible.builtin.shell: |
-        env | egrep -i 'http_proxy|https_proxy|no_proxy|AWS_'
+    - name: Check AWS & proxy environment variables
+      ansible.builtin.shell: env | egrep -i 'http_proxy|https_proxy|no_proxy|AWS_' || true
       register: env_vars
-      ignore_errors: yes
 
-    - name: Print AWS/proxy environment variables
+    - name: Display AWS/proxy environment variables
       ansible.builtin.debug:
         var: env_vars.stdout_lines
+
+    - name: Test network connectivity to EC2 API (ap-south-1)
+      ansible.builtin.shell: curl -s -o /dev/null -w "%{http_code}\n" https://ec2.ap-south-1.amazonaws.com/
+      register: ec2_connect
+      ignore_errors: yes
+
+    - name: Show EC2 API connectivity result
+      ansible.builtin.debug:
+        msg: "EC2 ap-south-1 endpoint HTTP status: {{ ec2_connect.stdout | default('no output') }}"
+
+    - name: Run inventory plugin with verbose debug
+      ansible.builtin.shell: ansible-inventory -i "{{ inventory_file_path }}" --list -vvv
+      register: inventory_debug
+      ignore_errors: yes
+
+    - name: Show inventory plugin debug output
+      ansible.builtin.debug:
+        var: inventory_debug.stdout_lines
