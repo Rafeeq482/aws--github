@@ -1,0 +1,34 @@
+---
+plugin: amazon.aws.ec2
+# This is the management account's default AWS profile/credentials in AWX.
+# It will be used for the first AssumeRole into each member account.
+regions:
+  - ap-south-1     # Mumbai
+  - us-east-1      # N. Virginia
+  - us-west-2      # Oregon
+  # Add more AWS regions as needed
+
+# Define the accounts to scan
+hostnames:
+  - private-ip-address
+  - public-ip-address
+
+filters:
+  instance-state-name: running
+
+# No tags — group by account and region
+keyed_groups:
+  - prefix: account
+    key: account_id
+  - prefix: region
+    key: placement.region
+
+# IAM role chaining for multiple accounts
+boto_profile: default
+iam_role_arns:
+  - arn:aws:iam::160885290762:role/AWXInventoryRole
+  - arn:aws:iam::650251710562:role/AWXInventoryRole
+  - arn:aws:iam::590184117033:role/AWXInventoryRole
+  # Add all your member account ARNs here
+
+strict_permissions: False
