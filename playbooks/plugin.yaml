@@ -1,0 +1,5 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check aws_ec2 plugin
+      ansible.builtin.command ansible-doc -t inventory amazon.aws.aws_ec2
