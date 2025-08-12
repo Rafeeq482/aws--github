@@ -1,19 +1,29 @@
+---
 plugin: amazon.aws.aws_ec2
+
 regions:
   - ap-south-1
   - us-east-1
   - us-west-2
+
 hostnames:
   - private_ip_address
   - public_ip_address
+
 filters:
   instance-state-name: running
+
 keyed_groups:
   - prefix: account
     key: account_id
   - prefix: region
     key: placement.region
+
+# Use instance role from AWX host — leave creds blank
 aws_access_key_id: ''
 aws_secret_access_key: ''
+
+# Assume into target accounts from management account role
 assume_role_arn: arn:aws:iam::650251710562:role/AWXInventoryRole
+
 strict: false
