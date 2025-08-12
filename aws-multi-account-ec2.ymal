@@ -13,6 +13,7 @@ keyed_groups:
     key: account_id
   - prefix: region
     key: placement.region
-profile: default
+aws_access_key_id: ''
+aws_secret_access_key: ''
 assume_role_arn: arn:aws:iam::650251710562:role/AWXInventoryRole
 strict: false
