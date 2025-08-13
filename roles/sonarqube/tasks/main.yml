@@ -1,11 +1,16 @@
 ---
-- name: Update and upgrade system
+- name: Ensure apt cache is updated
   apt:
     update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
+- name: Upgrade all packages to latest version
+  apt:
     upgrade: dist
   become: yes
 
-- name: Install dependencies
+- name: Install required dependencies
   apt:
     name:
       - "{{ java_package }}"
@@ -13,6 +18,7 @@
       - wget
       - postgresql
       - postgresql-contrib
+      - python3-psycopg2   # Required for Ansible PostgreSQL modules
     state: present
   become: yes
 
@@ -24,19 +30,21 @@
   become: yes
 
 - name: Create PostgreSQL user
+  become: yes
   become_user: postgres
   postgresql_user:
     name: "{{ sonarqube_db_user }}"
     password: "{{ sonarqube_db_password }}"
     encrypted: yes
-  become: yes
+  when: sonarqube_db_user is defined and sonarqube_db_password is defined
 
 - name: Create PostgreSQL database
+  become: yes
   become_user: postgres
   postgresql_db:
     name: "{{ sonarqube_db_name }}"
     owner: "{{ sonarqube_db_user }}"
-  become: yes
+  when: sonarqube_db_name is defined and sonarqube_db_user is defined
 
 - name: Create SonarQube system user
   user:
@@ -50,6 +58,7 @@
   get_url:
     url: "{{ sonarqube_download_url }}"
     dest: "/opt/sonarqube-{{ sonarqube_version }}.zip"
+    mode: '0644'
   become: yes
 
 - name: Unzip SonarQube
@@ -57,6 +66,7 @@
     src: "/opt/sonarqube-{{ sonarqube_version }}.zip"
     dest: /opt
     remote_src: yes
+    creates: "/opt/sonarqube-{{ sonarqube_version }}"
   become: yes
 
 - name: Move SonarQube directory
