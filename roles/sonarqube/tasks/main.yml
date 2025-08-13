@@ -29,7 +29,7 @@
     enabled: yes
   become: yes
 
-# --- Added PostgreSQL cluster initialization ---
+# --- PostgreSQL cluster initialization ---
 - name: Ensure PostgreSQL cluster is initialized (Debian/Ubuntu)
   command: pg_lsclusters
   register: cluster_check
@@ -47,7 +47,9 @@
   postgresql_user:
     name: postgres
     state: present
-# --- End of added section ---
+    login_host: "localhost"
+    login_unix_socket: ""
+# --- End cluster initialization ---
 
 - name: Create PostgreSQL user
   become: yes
@@ -56,6 +58,8 @@
     name: "{{ sonarqube_db_user }}"
     password: "{{ sonarqube_db_password }}"
     encrypted: yes
+    login_host: "localhost"
+    login_unix_socket: ""
   when: sonarqube_db_user is defined and sonarqube_db_password is defined
 
 - name: Create PostgreSQL database
@@ -64,6 +68,8 @@
   postgresql_db:
     name: "{{ sonarqube_db_name }}"
     owner: "{{ sonarqube_db_user }}"
+    login_host: "localhost"
+    login_unix_socket: ""
   when: sonarqube_db_name is defined and sonarqube_db_user is defined
 
 - name: Create SonarQube system user
