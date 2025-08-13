@@ -29,6 +29,26 @@
     enabled: yes
   become: yes
 
+# --- Added PostgreSQL cluster initialization ---
+- name: Ensure PostgreSQL cluster is initialized (Debian/Ubuntu)
+  command: pg_lsclusters
+  register: cluster_check
+  changed_when: false
+  become: yes
+
+- name: Initialize default PostgreSQL cluster if missing
+  command: pg_createcluster {{ postgresql_version | default('14') }} main --start
+  when: "'online' not in cluster_check.stdout"
+  become: yes
+
+- name: Ensure postgres DB role exists
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: postgres
+    state: present
+# --- End of added section ---
+
 - name: Create PostgreSQL user
   become: yes
   become_user: postgres
