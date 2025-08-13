@@ -39,6 +39,7 @@
 - name: Execute PostgreSQL DB creation script
   command: bash /home/ubuntu/create_sonar_db.sh "{{ sonarqube_db_user }}" "{{ sonarqube_db_password }}" "{{ sonarqube_db_name }}"
   become: yes
+  become_user: postgres
 # --- End script section ---
 
 - name: Create SonarQube system user
