@@ -39,13 +39,13 @@
   when: "'online' not in cluster_check.stdout"
   become: yes
 
-- name: Copy PostgreSQL DB creation script to ubuntu home
+- name: Copy DB creation script
   copy:
     src: create_sonar_db.sh
-    dest: /home/ubuntu/create_sonar_db.sh
+    dest: /tmp/create_db.sh
     mode: '0755'
-    owner: ubuntu
-    group: ubuntu
+    owner: postgres
+    group: postgres
   become: yes
 
 - name: Wait for PostgreSQL to become available
@@ -57,9 +57,9 @@
   become_user: ubuntu
 
 - name: Execute PostgreSQL DB creation script with sudo -u postgres
-  shell: sudo -u postgres bash create_sonar_db.sh "{{ sonarqube_db_user }}" "{{ sonarqube_db_password }}" "{{ sonarqube_db_name }}"
+  shell: sudo -u postgres bash create_db.sh "{{ sonarqube_db_user }}" "{{ sonarqube_db_password }}" "{{ sonarqube_db_name }}"
   args:
-    chdir: /home/ubuntu
+    chdir: /tmp
   become: yes
   become_user: ubuntu
 
