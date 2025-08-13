@@ -18,7 +18,6 @@
       - wget
       - postgresql
       - postgresql-contrib
-      - python3-psycopg2   # Required for Ansible PostgreSQL modules
     state: present
   become: yes
 
@@ -29,48 +28,18 @@
     enabled: yes
   become: yes
 
-# --- PostgreSQL cluster initialization ---
-- name: Ensure PostgreSQL cluster is initialized (Debian/Ubuntu)
-  command: pg_lsclusters
-  register: cluster_check
-  changed_when: false
+# --- Script-based DB & User creation ---
+- name: Copy PostgreSQL DB creation script
+  copy:
+    src: create_sonar_db.sh
+    dest: /home/ubuntu/create_sonar_db.sh
+    mode: '0755'
   become: yes
 
-- name: Initialize default PostgreSQL cluster if missing
-  command: pg_createcluster {{ postgresql_version | default('14') }} main --start
-  when: "'online' not in cluster_check.stdout"
+- name: Execute PostgreSQL DB creation script
+  command: bash /home/ubuntu/create_sonar_db.sh "{{ sonarqube_db_user }}" "{{ sonarqube_db_password }}" "{{ sonarqube_db_name }}"
   become: yes
-
-- name: Ensure postgres DB role exists
-  become: yes
-  become_user: postgres
-  postgresql_user:
-    name: postgres
-    state: present
-    login_host: "localhost"
-    login_unix_socket: ""
-# --- End cluster initialization ---
-
-- name: Create PostgreSQL user
-  become: yes
-  become_user: postgres
-  postgresql_user:
-    name: "{{ sonarqube_db_user }}"
-    password: "{{ sonarqube_db_password }}"
-    encrypted: yes
-    login_host: "localhost"
-    login_unix_socket: ""
-  when: sonarqube_db_user is defined and sonarqube_db_password is defined
-
-- name: Create PostgreSQL database
-  become: yes
-  become_user: postgres
-  postgresql_db:
-    name: "{{ sonarqube_db_name }}"
-    owner: "{{ sonarqube_db_user }}"
-    login_host: "localhost"
-    login_unix_socket: ""
-  when: sonarqube_db_name is defined and sonarqube_db_user is defined
+# --- End script section ---
 
 - name: Create SonarQube system user
   user:
