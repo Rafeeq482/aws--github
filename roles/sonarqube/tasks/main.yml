@@ -39,15 +39,14 @@
   when: "'online' not in cluster_check.stdout"
   become: yes
 
-
 - name: Copy PostgreSQL DB creation script
   copy:
     src: create_sonar_db.sh
     dest: /tmp/create_sonar_db.sh
     mode: '0755'
+    owner: postgres
+    group: postgres
   become: yes
-  owner: postgres
-  group: postgres
 
 - name: Wait for PostgreSQL to become available
   shell: |
@@ -63,8 +62,6 @@
     chdir: /tmp
   become: yes
   become_user: postgres
-# --- End script section ---
-
 
 - name: Create SonarQube system user
   user:
