@@ -85,14 +85,20 @@
     state: absent
   become: yes
 
-- name: Create SonarQube base directory
+- name: Remove temp extraction directory if present
   file:
-    path: /opt/sonarqube
+    path: /opt/sonarqube-temp
+    state: absent
+  become: yes
+
+- name: Create SonarQube temp extraction directory
+  file:
+    path: /opt/sonarqube-temp
     state: directory
     mode: '0755'
   become: yes
 
-- name: Unzip SonarQube into a temp directory
+- name: Unzip SonarQube into temp directory
   unarchive:
     src: "/opt/sonarqube-{{ sonarqube_version }}.zip"
     dest: /opt/sonarqube-temp
