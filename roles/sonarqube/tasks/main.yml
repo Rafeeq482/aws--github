@@ -28,6 +28,17 @@
     enabled: yes
   become: yes
 
+- name: Ensure PostgreSQL cluster is initialized
+  command: pg_lsclusters
+  register: cluster_check
+  changed_when: false
+  become: yes
+
+- name: Initialize default PostgreSQL cluster if missing
+  command: pg_createcluster {{ postgresql_version | default('14') }} main --start
+  when: "'online' not in cluster_check.stdout"
+  become: yes
+
 # --- Script-based DB & User creation ---
 - name: Copy PostgreSQL DB creation script
   copy:
