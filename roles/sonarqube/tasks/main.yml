@@ -47,6 +47,14 @@
     mode: '0755'
   become: yes
 
+- name: Wait for PostgreSQL to become available
+  shell: |
+    until pg_isready -h localhost -p 5432; do
+      sleep 1
+    done
+  become: yes
+  become_user: postgres
+
 - name: Execute PostgreSQL DB creation script
   command: bash /home/ubuntu/create_sonar_db.sh "{{ sonarqube_db_user }}" "{{ sonarqube_db_password }}" "{{ sonarqube_db_name }}"
   become: yes
