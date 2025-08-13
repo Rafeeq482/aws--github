@@ -92,7 +92,7 @@
     removes: "{{ sonarqube_install_dir }}"
   become: yes
 
-- name: Set SonarQube ownership
+- name: Ensure SonarQube install directory ownership
   file:
     path: "{{ sonarqube_install_dir }}"
     owner: "{{ sonarqube_user }}"
@@ -106,12 +106,23 @@
     dest: "{{ sonarqube_install_dir }}/conf/sonar.properties"
     owner: "{{ sonarqube_user }}"
     group: "{{ sonarqube_group }}"
+    mode: '0644'
+  become: yes
+  force: yes
+
+- name: Ensure conf directory permissions allow write
+  file:
+    path: "{{ sonarqube_install_dir }}/conf"
+    owner: "{{ sonarqube_user }}"
+    group: "{{ sonarqube_group }}"
+    mode: '0755'
   become: yes
 
 - name: Create systemd service file
   template:
     src: sonarqube.service.j2
     dest: /etc/systemd/system/sonarqube.service
+    mode: '0644'
   become: yes
 
 - name: Reload systemd daemon
