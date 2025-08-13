@@ -79,43 +79,46 @@
     mode: '0644'
   become: yes
 
-- name: Unzip SonarQube
+- name: Remove existing SonarQube directory if present
+  file:
+    path: /opt/sonarqube
+    state: absent
+  become: yes
+
+- name: Create SonarQube base directory
+  file:
+    path: /opt/sonarqube
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Unzip SonarQube directly into /opt/sonarqube
   unarchive:
     src: "/opt/sonarqube-{{ sonarqube_version }}.zip"
-    dest: /opt
+    dest: /opt/sonarqube
     remote_src: yes
-    creates: "/opt/sonarqube-{{ sonarqube_version }}"
+    extra_opts: [--strip-components=1]
   become: yes
 
-- name: Move SonarQube directory
-  command: mv "/opt/sonarqube-{{ sonarqube_version }}" "{{ sonarqube_install_dir }}"
-  args:
-    removes: "{{ sonarqube_install_dir }}"
-  become: yes
-
-- name: Ensure SonarQube install directory ownership
-  file:
-    path: "{{ sonarqube_install_dir }}"
-    owner: "{{ sonarqube_user }}"
-    group: "{{ sonarqube_group }}"
-    recurse: yes
+- name: Ensure ubuntu owns the SonarQube directory
+  command: chown -R ubuntu:ubuntu /opt/sonarqube
   become: yes
 
 - name: Ensure conf directory exists
   file:
-    path: "{{ sonarqube_install_dir }}/conf"
+    path: /opt/sonarqube/conf
     state: directory
-    owner: "{{ sonarqube_user }}"
-    group: "{{ sonarqube_group }}"
+    owner: ubuntu
+    group: ubuntu
     mode: '0755'
   become: yes
 
 - name: Configure sonar.properties
   template:
     src: sonar.properties.j2
-    dest: "{{ sonarqube_install_dir }}/conf/sonar.properties"
-    owner: "{{ sonarqube_user }}"
-    group: "{{ sonarqube_group }}"
+    dest: /opt/sonarqube/conf/sonar.properties
+    owner: ubuntu
+    group: ubuntu
     mode: '0644'
     force: yes
   become: yes
