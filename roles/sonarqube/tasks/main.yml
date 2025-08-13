@@ -106,7 +106,7 @@
   become: yes
 
 - name: Move SonarQube contents into /opt/sonarqube
-  command: mv /opt/sonarqube-temp/* /opt/sonarqube/
+  shell: mv /opt/sonarqube-temp/* /opt/sonarqube/
   become: yes
 
 - name: Remove temporary SonarQube extraction directory
