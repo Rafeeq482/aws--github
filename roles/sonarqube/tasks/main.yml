@@ -39,7 +39,7 @@
   when: "'online' not in cluster_check.stdout"
   become: yes
 
-# --- Script-based DB & User creation ---
+
 - name: Copy PostgreSQL DB creation script
   copy:
     src: create_sonar_db.sh
