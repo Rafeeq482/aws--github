@@ -1,0 +1,100 @@
+---
+- name: Update and upgrade system
+  apt:
+    update_cache: yes
+    upgrade: dist
+  become: yes
+
+- name: Install dependencies
+  apt:
+    name:
+      - "{{ java_package }}"
+      - unzip
+      - wget
+      - postgresql
+      - postgresql-contrib
+    state: present
+  become: yes
+
+- name: Ensure PostgreSQL service is running
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Create PostgreSQL user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ sonarqube_db_user }}"
+    password: "{{ sonarqube_db_password }}"
+    encrypted: yes
+  become: yes
+
+- name: Create PostgreSQL database
+  become_user: postgres
+  postgresql_db:
+    name: "{{ sonarqube_db_name }}"
+    owner: "{{ sonarqube_db_user }}"
+  become: yes
+
+- name: Create SonarQube system user
+  user:
+    name: "{{ sonarqube_user }}"
+    system: yes
+    shell: /bin/false
+    create_home: no
+  become: yes
+
+- name: Download SonarQube
+  get_url:
+    url: "{{ sonarqube_download_url }}"
+    dest: "/opt/sonarqube-{{ sonarqube_version }}.zip"
+  become: yes
+
+- name: Unzip SonarQube
+  unarchive:
+    src: "/opt/sonarqube-{{ sonarqube_version }}.zip"
+    dest: /opt
+    remote_src: yes
+  become: yes
+
+- name: Move SonarQube directory
+  command: mv "/opt/sonarqube-{{ sonarqube_version }}" "{{ sonarqube_install_dir }}"
+  args:
+    removes: "{{ sonarqube_install_dir }}"
+  become: yes
+
+- name: Set SonarQube ownership
+  file:
+    path: "{{ sonarqube_install_dir }}"
+    owner: "{{ sonarqube_user }}"
+    group: "{{ sonarqube_group }}"
+    recurse: yes
+  become: yes
+
+- name: Configure sonar.properties
+  template:
+    src: sonar.properties.j2
+    dest: "{{ sonarqube_install_dir }}/conf/sonar.properties"
+    owner: "{{ sonarqube_user }}"
+    group: "{{ sonarqube_group }}"
+  become: yes
+
+- name: Create systemd service file
+  template:
+    src: sonarqube.service.j2
+    dest: /etc/systemd/system/sonarqube.service
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start SonarQube service
+  systemd:
+    name: sonarqube
+    state: started
+    enabled: yes
+  become: yes

@@ -1,0 +1,11 @@
+---
+sonarqube_version: "25.7.0.110598"
+sonarqube_user: "sonar"
+sonarqube_group: "sonar"
+sonarqube_db_name: "sonarqube"
+sonarqube_db_user: "sonar"
+sonarqube_db_password: "sonarpass"
+sonarqube_download_url: "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-{{ sonarqube_version }}.zip"
+sonarqube_install_dir: "/opt/sonarqube"
+java_package: "openjdk-17-jdk"
+

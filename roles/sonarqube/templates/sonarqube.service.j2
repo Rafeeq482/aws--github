@@ -1,0 +1,17 @@
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User={{ sonarqube_user }}
+Group={{ sonarqube_group }}
+PermissionsStartOnly=true
+ExecStart={{ sonarqube_install_dir }}/bin/linux-x86-64/sonar.sh start
+ExecStop={{ sonarqube_install_dir }}/bin/linux-x86-64/sonar.sh stop
+Restart=on-failure
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target
