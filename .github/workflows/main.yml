@@ -1,34 +1,24 @@
-name: Run Ansible Playbook on Custom Server
-
 on:
   workflow_dispatch:
     inputs:
       target_ip:
-        description: 'Target server IP'
         required: true
-      pem_key:
-        description: 'Private key content (.pem file text)'
+      pem_b64:
+        description: "Base64 encoded PEM"
         required: true
-        type: string
 
 jobs:
-  run-ansible:
+  ansible:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Ansible
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ansible
+      - name: Decode PEM
         run: |
-          sudo apt update -y
-          sudo apt install -y ansible
-
-      - name: Create PEM file
-        run: |
-          printf "%s" "${{ github.event.inputs.pem_key }}" > private-key.pem
+          echo "${{ github.event.inputs.pem_b64 }}" | base64 -d > private-key.pem
           chmod 600 private-key.pem
-
-      - name: Run Ansible Playbook
+      - name: Run playbook
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
+            -u ubuntu \
             --private-key=private-key.pem playbooks/package_install.yml
