@@ -1,3 +1,5 @@
+name: Run Ansible Playbook
+
 on:
   workflow_dispatch:
     inputs:
@@ -10,13 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y ansible
-      - name: Write PEM file
+
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
+      - name: Write PEM file from secret
         run: |
           echo "${{ secrets.PEM_KEY }}" > private-key.pem
           chmod 600 private-key.pem
-      - name: Run playbook
+
+      - name: Run Ansible Playbook
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
-            -u ubuntu \  # adjust user if needed
             --private-key=private-key.pem playbooks/package_install.yml
