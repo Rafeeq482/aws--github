@@ -11,10 +11,14 @@
     state: present
   when: install_python3
 
-- name: Install boto3 using pip
-  ansible.builtin.pip:
-    name: boto3
+- name: Install boto3 from apt
+  become: yes
+  ansible.builtin.apt:
+    name: python3-boto3
+    state: present
+    update_cache: yes
   when: install_boto3
+
 
 - name: Install Node.js
   ansible.builtin.apt:
