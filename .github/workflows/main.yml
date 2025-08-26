@@ -2,9 +2,7 @@ on:
   workflow_dispatch:
     inputs:
       target_ip:
-        required: true
-      pem_b64:
-        description: "Base64 encoded PEM"
+        description: "Target server IP"
         required: true
 
 jobs:
@@ -13,12 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y ansible
-      - name: Decode PEM
+      - name: Write PEM file
         run: |
-          echo "${{ github.event.inputs.pem_b64 }}" | base64 -d > private-key.pem
+          echo "${{ secrets.PEM_KEY }}" > private-key.pem
           chmod 600 private-key.pem
       - name: Run playbook
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
-            -u ubuntu \
+            -u ubuntu \  # adjust user if needed
             --private-key=private-key.pem playbooks/package_install.yml
