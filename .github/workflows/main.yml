@@ -31,4 +31,4 @@ jobs:
       - name: Run Ansible Playbook
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
-            --private-key=private-key.pem playbooks/site.yml
+            --private-key=private-key.pem playbooks/package_install.yml
