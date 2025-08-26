@@ -25,7 +25,7 @@ jobs:
 
       - name: Create PEM file
         run: |
-          echo "${{ github.event.inputs.pem_key }}" > private-key.pem
+          printf "%s" "${{ github.event.inputs.pem_key }}" > private-key.pem
           chmod 600 private-key.pem
 
       - name: Run Ansible Playbook
