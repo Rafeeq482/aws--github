@@ -18,12 +18,14 @@ jobs:
 
       - name: Write PEM file from secret
         run: |
-          echo "${{ secrets.PEM_KEY }}" > private-key.pem
+          echo "${{ secrets.PEM_KEY }}" | tr -d '\r' > private-key.pem
           chmod 600 private-key.pem
 
       - name: Run Ansible Playbook (Verbose)
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
+            -u ubuntu \
             --private-key=private-key.pem \
             -vvv \
             playbooks/package_install.yml
+
