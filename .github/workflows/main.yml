@@ -1,0 +1,34 @@
+name: Run Ansible Playbook on Custom Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_ip:
+        description: 'Target server IP'
+        required: true
+      pem_key:
+        description: 'Private key content (.pem file text)'
+        required: true
+        type: string
+
+jobs:
+  run-ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: |
+          sudo apt update -y
+          sudo apt install -y ansible
+
+      - name: Create PEM file
+        run: |
+          echo "${{ github.event.inputs.pem_key }}" > private-key.pem
+          chmod 600 private-key.pem
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
+            --private-key=private-key.pem site.yml
