@@ -23,9 +23,5 @@ jobs:
 
       - name: Run Ansible Playbook (Verbose)
         run: |
-          ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
-            -u ubuntu \
-            --private-key=private-key.pem \
-            -vvv \
-            playbooks/package_install.yml
+          ansible-playbook -i "${{ github.event.inputs.target_ip }}," --private-key=private-key.pem --user ubuntu playbooks/package_install.yml
 
