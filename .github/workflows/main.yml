@@ -6,22 +6,32 @@ on:
       target_ip:
         description: "Target server IP"
         required: true
+      ssh_user:
+        description: "SSH username (e.g., ubuntu)"
+        required: true
+        default: "ubuntu"
+      private_key:
+        description: "Paste your private key content here"
+        required: true
 
 jobs:
   ansible:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Install Ansible
+      - name: Set up Ansible
         run: sudo apt-get update && sudo apt-get install -y ansible
 
-      - name: Write PEM file from secret
+      - name: Save Private Key
         run: |
-          echo "${{ secrets.PEM_KEY }}" > private-key.pem
+          echo "${{ github.event.inputs.private_key }}" > private-key.pem
           chmod 600 private-key.pem
 
       - name: Run Ansible Playbook
         run: |
           ansible-playbook -i "${{ github.event.inputs.target_ip }}," \
-            --private-key=private-key.pem playbooks/package_install.yml
+            --user "${{ github.event.inputs.ssh_user }}" \
+            --private-key private-key.pem playbooks/package_install.yml -vvv
+
