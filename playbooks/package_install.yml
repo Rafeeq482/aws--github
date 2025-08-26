@@ -5,10 +5,10 @@
   hosts: all
   become: true
   vars:
-    install_pip: false
-    install_python3: false
-    install_boto3: false
-    install_nodejs: false
+    install_pip: true
+    install_python3: true
+    install_boto3: true
+    install_nodejs: true
     install_php: true
     install_nginx: false
     install_apache2: false
